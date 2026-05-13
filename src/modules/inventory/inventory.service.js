@@ -5,11 +5,16 @@ export class InventoryService {
   async list(query) {
     const {
       q = '',
-      activo,
-      lowStock,
-      page = 1,
-      limit = 10
     } = query
+
+    // Estas dos lineas son por que express siempre entrega strings en el req.query
+    // Entonces hay que parsearlos explícitamente
+    const activo = query.activo === 'true' ? true : query.activo === 'false' ? false : undefined
+    const lowStock = query.lowStock === 'true'
+
+    // Para parsear bien (asegurarse que son numeros y no strings)
+    const page = Math.max(1, parseInt(query.page, 10) || 1) // Asegura que page sea al menos 1
+    const limit = Math.max(1, parseInt(query.limit, 10) || 10) // Asegura que limit sea al menos 1
 
     const allProducts = await inventoryRepository.findAllProducts()
 
@@ -30,11 +35,13 @@ export class InventoryService {
       })
     }
 
-    if (typeof activo === 'boolean') {
+    // El parametro activo ahora si es true o false o unidefined para que no filtre
+    if (activo !== undefined) {
       filtered = filtered.filter((product) => (product.activo ?? true) === activo)
     }
 
-    if (typeof lowStock === 'boolean' && lowStock) {
+    // lowStock ahora tambien es un booleano real
+    if (lowStock) {
       filtered = filtered.filter((product) => {
         const stock = Number(product.stock || 0)
         const stockMinimo = Number(product.stockMinimo || 0)
@@ -149,9 +156,11 @@ export class InventoryService {
       q = '',
       productId,
       tipo,
-      page = 1,
-      limit = 10
     } = query
+
+    // Igualmente para parsear bien los parametros de paginación (asegurarse q sean numeros y no strings)
+    const page = Math.max(1, parseInt(query.page, 10) || 1)
+    const limit = Math.max(1, parseInt(query.limit, 10) || 10)
 
     const allMovements = await inventoryRepository.findAllMovements()
 
