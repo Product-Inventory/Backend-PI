@@ -2,6 +2,7 @@ import { clientsService } from './clients.service.js'
 
 export class ClientsController {
   async list(req, res) {
+    console.log('req.query:', req.query);
     const result = await clientsService.list(req.query)
 
     return res.status(200).json(result)
