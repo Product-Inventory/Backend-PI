@@ -11,7 +11,7 @@ function normalizeOptionalText(value) {
 
 export class ClientsService {
   async list(query) {
-    const {
+    let {
       q = '',
       activo,
       page = 1,
@@ -19,12 +19,10 @@ export class ClientsService {
     } = query
 
     const allClients = await clientsRepository.findAll()
-
     let filtered = allClients
 
     if (q) {
       const term = q.trim().toLowerCase()
-
       filtered = filtered.filter((client) => {
         return (
           String(client.nombre || '').toLowerCase().includes(term) ||
@@ -37,6 +35,13 @@ export class ClientsService {
       })
     }
 
+    if (typeof activo === 'string') {
+      if (['true', 'false'].includes(activo)) {
+        activo = activo === 'true'
+      } else {
+        activo = undefined
+      }
+    }
     if (typeof activo === 'boolean') {
       filtered = filtered.filter((client) => (client.activo ?? true) === activo)
     }
