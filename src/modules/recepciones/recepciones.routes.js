@@ -4,6 +4,7 @@ import { authenticate } from '../../middlewares/auth.js'
 import { requirePermissions } from '../../middlewares/requirePermissions.js'
 import { validate } from '../../middlewares/validate.js'
 import { asyncHandler } from '../../utils/asyncHandler.js'
+import { PERMS } from '../../constants/permissions.js'
 import {
   createRecepcionSchema,
   listRecepcionesQuerySchema,
@@ -16,7 +17,7 @@ const router = Router()
 router.get(
   '/',
   authenticate,
-  requirePermissions(['recepciones:read']),
+  requirePermissions([PERMS.RECEPCIONES.READ]),
   validate(listRecepcionesQuerySchema, 'query'),
   asyncHandler(recepcionesController.list.bind(recepcionesController))
 )
@@ -24,7 +25,7 @@ router.get(
 router.get(
   '/:id',
   authenticate,
-  requirePermissions(['recepciones:read']),
+  requirePermissions([PERMS.RECEPCIONES.READ]),
   validate(recepcionIdParamSchema, 'params'),
   asyncHandler(recepcionesController.getById.bind(recepcionesController))
 )
@@ -32,7 +33,7 @@ router.get(
 router.post(
   '/',
   authenticate,
-  requirePermissions(['recepciones:create']),
+  requirePermissions([PERMS.RECEPCIONES.CREATE]),
   validate(createRecepcionSchema),
   asyncHandler(recepcionesController.create.bind(recepcionesController))
 )
@@ -40,7 +41,7 @@ router.post(
 router.patch(
   '/:id',
   authenticate,
-  requirePermissions(['recepciones:update']),
+  requirePermissions([PERMS.RECEPCIONES.UPDATE]),
   validate(recepcionIdParamSchema, 'params'),
   validate(updateRecepcionSchema),
   asyncHandler(recepcionesController.update.bind(recepcionesController))
@@ -49,7 +50,7 @@ router.patch(
 router.patch(
   '/:id/confirm',
   authenticate,
-  requirePermissions(['recepciones:update']),
+  requirePermissions([PERMS.RECEPCIONES.UPDATE]),
   validate(recepcionIdParamSchema, 'params'),
   asyncHandler(recepcionesController.confirm.bind(recepcionesController))
 )
@@ -57,7 +58,7 @@ router.patch(
 router.delete(
   '/:id',
   authenticate,
-  requirePermissions(['recepciones:delete']),
+  requirePermissions([PERMS.RECEPCIONES.DELETE]),
   validate(recepcionIdParamSchema, 'params'),
   asyncHandler(recepcionesController.remove.bind(recepcionesController))
 )

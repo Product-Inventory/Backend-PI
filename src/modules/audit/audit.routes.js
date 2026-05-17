@@ -4,6 +4,7 @@ import { authenticate } from '../../middlewares/auth.js'
 import { requirePermissions } from '../../middlewares/requirePermissions.js'
 import { validate } from '../../middlewares/validate.js'
 import { asyncHandler } from '../../utils/asyncHandler.js'
+import { PERMS } from '../../constants/permissions.js'
 import {
   auditIdParamSchema,
   createAuditSchema,
@@ -15,7 +16,7 @@ const router = Router()
 router.get(
   '/',
   authenticate,
-  requirePermissions(['audit:read']),
+  requirePermissions([PERMS.AUDIT.READ]),
   validate(listAuditQuerySchema, 'query'),
   asyncHandler(auditController.list.bind(auditController))
 )
@@ -23,15 +24,16 @@ router.get(
 router.get(
   '/:id',
   authenticate,
-  requirePermissions(['audit:read']),
+  requirePermissions([PERMS.AUDIT.READ]),
   validate(auditIdParamSchema, 'params'),
   asyncHandler(auditController.getById.bind(auditController))
 )
 
+// FIXED: antes usaba se audit:read para una operación de escritura
 router.post(
   '/',
   authenticate,
-  requirePermissions(['audit:read']),
+  requirePermissions([PERMS.AUDIT.CREATE]),
   validate(createAuditSchema),
   asyncHandler(auditController.create.bind(auditController))
 )
