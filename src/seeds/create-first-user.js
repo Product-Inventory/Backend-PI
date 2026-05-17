@@ -55,6 +55,8 @@ const DEFAULT_PERMISSIONS = [
   { code: 'recepciones:delete', nombre: 'Eliminar recepciones', descripcion: 'Permite eliminar recepciones', modulo: 'recepciones' },
 
   { code: 'audit:read', nombre: 'Ver auditoría', descripcion: 'Permite consultar la auditoría', modulo: 'audit' },
+  // Para que se solucione el error de inconsistencia q habia que para crear un auditoria solo se pedi audit:read y no habia un permiso de create
+  { code: 'audit:create', nombre: 'Crear evento de auditoría', descripcion: 'Permite registrar eventos de auditoría manualmente', modulo: 'audit' },
   { code: 'dashboard:read', nombre: 'Ver dashboard', descripcion: 'Permite consultar el dashboard', modulo: 'dashboard' }
 ]
 
