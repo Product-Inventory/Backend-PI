@@ -4,6 +4,7 @@ import { authenticate } from '../../middlewares/auth.js'
 import { requirePermissions } from '../../middlewares/requirePermissions.js'
 import { validate } from '../../middlewares/validate.js'
 import { asyncHandler } from '../../utils/asyncHandler.js'
+import { PERMS } from '../../constants/permissions.js'
 import {
   createProductSchema,
   listProductsQuerySchema,
@@ -17,7 +18,7 @@ const router = Router()
 router.get(
   '/',
   authenticate,
-  requirePermissions(['products:read']),
+  requirePermissions([PERMS.PRODUCTS.READ]),
   validate(listProductsQuerySchema, 'query'),
   asyncHandler(productsController.list.bind(productsController))
 )
@@ -25,7 +26,7 @@ router.get(
 router.get(
   '/:id',
   authenticate,
-  requirePermissions(['products:read']),
+  requirePermissions([PERMS.PRODUCTS.READ]),
   validate(productIdParamSchema, 'params'),
   asyncHandler(productsController.getById.bind(productsController))
 )
@@ -33,7 +34,7 @@ router.get(
 router.post(
   '/',
   authenticate,
-  requirePermissions(['products:create']),
+  requirePermissions([PERMS.PRODUCTS.CREATE]),
   validate(createProductSchema),
   asyncHandler(productsController.create.bind(productsController))
 )
@@ -41,7 +42,7 @@ router.post(
 router.patch(
   '/:id',
   authenticate,
-  requirePermissions(['products:update']),
+  requirePermissions([PERMS.PRODUCTS.UPDATE]),
   validate(productIdParamSchema, 'params'),
   validate(updateProductSchema),
   asyncHandler(productsController.update.bind(productsController))
@@ -50,7 +51,7 @@ router.patch(
 router.patch(
   '/:id/toggle-active',
   authenticate,
-  requirePermissions(['products:update']),
+  requirePermissions([PERMS.PRODUCTS.UPDATE]),
   validate(productIdParamSchema, 'params'),
   validate(toggleProductActiveSchema),
   asyncHandler(productsController.toggleActive.bind(productsController))
@@ -59,7 +60,7 @@ router.patch(
 router.delete(
   '/:id',
   authenticate,
-  requirePermissions(['products:delete']),
+  requirePermissions([PERMS.PRODUCTS.DELETE]),
   validate(productIdParamSchema, 'params'),
   asyncHandler(productsController.remove.bind(productsController))
 )

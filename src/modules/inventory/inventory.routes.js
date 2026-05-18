@@ -4,6 +4,7 @@ import { authenticate } from '../../middlewares/auth.js'
 import { requirePermissions } from '../../middlewares/requirePermissions.js'
 import { validate } from '../../middlewares/validate.js'
 import { asyncHandler } from '../../utils/asyncHandler.js'
+import { PERMS } from '../../constants/permissions.js'
 import {
   adjustInventorySchema,
   inventoryProductIdParamSchema,
@@ -16,7 +17,7 @@ const router = Router()
 router.get(
   '/',
   authenticate,
-  requirePermissions(['inventory:read']),
+  requirePermissions([PERMS.INVENTORY.READ]),
   validate(listInventoryQuerySchema, 'query'),
   asyncHandler(inventoryController.list.bind(inventoryController))
 )
@@ -24,7 +25,7 @@ router.get(
 router.get(
   '/movements',
   authenticate,
-  requirePermissions(['inventory:read']),
+  requirePermissions([PERMS.INVENTORY.READ]),
   validate(listInventoryMovementsQuerySchema, 'query'),
   asyncHandler(inventoryController.listMovements.bind(inventoryController))
 )
@@ -32,7 +33,7 @@ router.get(
 router.get(
   '/:productId',
   authenticate,
-  requirePermissions(['inventory:read']),
+  requirePermissions([PERMS.INVENTORY.READ]),
   validate(inventoryProductIdParamSchema, 'params'),
   asyncHandler(inventoryController.getByProductId.bind(inventoryController))
 )
@@ -40,7 +41,7 @@ router.get(
 router.patch(
   '/:productId/adjust',
   authenticate,
-  requirePermissions(['inventory:update']),
+  requirePermissions([PERMS.INVENTORY.UPDATE]),
   validate(inventoryProductIdParamSchema, 'params'),
   validate(adjustInventorySchema),
   asyncHandler(inventoryController.adjust.bind(inventoryController))

@@ -1,6 +1,7 @@
 import bcrypt from 'bcryptjs'
 import { signAccessToken } from '../../config/jwt.js'
 import { authRepository } from './auth.repository.js'
+import { MODULES } from '../../constants/permissions.js'
 
 export class AuthService {
   async login(payload) {
@@ -36,6 +37,7 @@ export class AuthService {
       throw error
     }
 
+    // El JWT solo lleva sub para identificar al usuario; los permisos se releen desde Firestore en cada request
     const token = signAccessToken({
       sub: user.id,
       usuario: user.usuario,
@@ -66,6 +68,22 @@ export class AuthService {
     }
 
     return this.sanitizeUser(user)
+  }
+
+  // Construye la lista de módulos accesibles con flags de acciones para el frontend.
+  // Solo incluye módulos donde el usuario tiene al menos un permiso.
+  buildMenu(permissions = []) {
+    const has = (p) => permissions.includes(p)
+
+    return MODULES
+      .map((code) => ({
+        code,
+        canRead:   has(`${code}:read`),
+        canCreate: has(`${code}:create`),
+        canUpdate: has(`${code}:update`),
+        canDelete: has(`${code}:delete`)
+      }))
+      .filter((m) => m.canRead || m.canCreate || m.canUpdate || m.canDelete)
   }
 
   sanitizeUser(user) {

@@ -4,6 +4,7 @@ import { authenticate } from '../../middlewares/auth.js'
 import { requirePermissions } from '../../middlewares/requirePermissions.js'
 import { validate } from '../../middlewares/validate.js'
 import { asyncHandler } from '../../utils/asyncHandler.js'
+import { PERMS } from '../../constants/permissions.js'
 import {
   clientIdParamSchema,
   createClientSchema,
@@ -17,7 +18,7 @@ const router = Router()
 router.get(
   '/',
   authenticate,
-  requirePermissions(['clients:read']),
+  requirePermissions([PERMS.CLIENTS.READ]),
   validate(listClientsQuerySchema, 'query'),
   asyncHandler(clientsController.list.bind(clientsController))
 )
@@ -25,7 +26,7 @@ router.get(
 router.get(
   '/:id',
   authenticate,
-  requirePermissions(['clients:read']),
+  requirePermissions([PERMS.CLIENTS.READ]),
   validate(clientIdParamSchema, 'params'),
   asyncHandler(clientsController.getById.bind(clientsController))
 )
@@ -33,7 +34,7 @@ router.get(
 router.post(
   '/',
   authenticate,
-  requirePermissions(['clients:create']),
+  requirePermissions([PERMS.CLIENTS.CREATE]),
   validate(createClientSchema),
   asyncHandler(clientsController.create.bind(clientsController))
 )
@@ -41,7 +42,7 @@ router.post(
 router.patch(
   '/:id',
   authenticate,
-  requirePermissions(['clients:update']),
+  requirePermissions([PERMS.CLIENTS.UPDATE]),
   validate(clientIdParamSchema, 'params'),
   validate(updateClientSchema),
   asyncHandler(clientsController.update.bind(clientsController))
@@ -50,7 +51,7 @@ router.patch(
 router.patch(
   '/:id/toggle-active',
   authenticate,
-  requirePermissions(['clients:update']),
+  requirePermissions([PERMS.CLIENTS.UPDATE]),
   validate(clientIdParamSchema, 'params'),
   validate(toggleClientActiveSchema),
   asyncHandler(clientsController.toggleActive.bind(clientsController))
@@ -59,7 +60,7 @@ router.patch(
 router.delete(
   '/:id',
   authenticate,
-  requirePermissions(['clients:delete']),
+  requirePermissions([PERMS.CLIENTS.DELETE]),
   validate(clientIdParamSchema, 'params'),
   asyncHandler(clientsController.remove.bind(clientsController))
 )

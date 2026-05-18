@@ -4,6 +4,7 @@ import { authenticate } from '../../middlewares/auth.js'
 import { requirePermissions } from '../../middlewares/requirePermissions.js'
 import { validate } from '../../middlewares/validate.js'
 import { asyncHandler } from '../../utils/asyncHandler.js'
+import { PERMS } from '../../constants/permissions.js'
 import {
   createSupplierSchema,
   listSuppliersQuerySchema,
@@ -17,7 +18,7 @@ const router = Router()
 router.get(
   '/',
   authenticate,
-  requirePermissions(['suppliers:read']),
+  requirePermissions([PERMS.SUPPLIERS.READ]),
   validate(listSuppliersQuerySchema, 'query'),
   asyncHandler(suppliersController.list.bind(suppliersController))
 )
@@ -25,7 +26,7 @@ router.get(
 router.get(
   '/:id',
   authenticate,
-  requirePermissions(['suppliers:read']),
+  requirePermissions([PERMS.SUPPLIERS.READ]),
   validate(supplierIdParamSchema, 'params'),
   asyncHandler(suppliersController.getById.bind(suppliersController))
 )
@@ -33,7 +34,7 @@ router.get(
 router.post(
   '/',
   authenticate,
-  requirePermissions(['suppliers:create']),
+  requirePermissions([PERMS.SUPPLIERS.CREATE]),
   validate(createSupplierSchema),
   asyncHandler(suppliersController.create.bind(suppliersController))
 )
@@ -41,7 +42,7 @@ router.post(
 router.patch(
   '/:id',
   authenticate,
-  requirePermissions(['suppliers:update']),
+  requirePermissions([PERMS.SUPPLIERS.UPDATE]),
   validate(supplierIdParamSchema, 'params'),
   validate(updateSupplierSchema),
   asyncHandler(suppliersController.update.bind(suppliersController))
@@ -50,7 +51,7 @@ router.patch(
 router.patch(
   '/:id/toggle-active',
   authenticate,
-  requirePermissions(['suppliers:update']),
+  requirePermissions([PERMS.SUPPLIERS.UPDATE]),
   validate(supplierIdParamSchema, 'params'),
   validate(toggleSupplierActiveSchema),
   asyncHandler(suppliersController.toggleActive.bind(suppliersController))
@@ -59,7 +60,7 @@ router.patch(
 router.delete(
   '/:id',
   authenticate,
-  requirePermissions(['suppliers:delete']),
+  requirePermissions([PERMS.SUPPLIERS.DELETE]),
   validate(supplierIdParamSchema, 'params'),
   asyncHandler(suppliersController.remove.bind(suppliersController))
 )

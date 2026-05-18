@@ -88,6 +88,19 @@ export class AuditService {
     return this.sanitizeAudit(created)
   }
 
+  // Registra un intento de acceso denegado. Se llama desde requirePermissions de forma asíncrona.
+  async logDenied({ userId, usuario, method, path, required, missing }) {
+    await auditRepository.create({
+      action: 'access_denied',
+      resource: path,
+      resourceId: '',
+      details: { method, required, missing },
+      userId: userId || '',
+      usuario: usuario || '',
+      createdAt: new Date().toISOString()
+    })
+  }
+
   sanitizeAudit(log) {
     return {
       id: log.id,
