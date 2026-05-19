@@ -26,7 +26,8 @@ const orderItemSchema = z.object({
 
 export const createOrderSchema = z.object({
   folio: z.string().min(1),
-  fecha: z.string().min(1),
+  fechaOrden: z.string().min(1),
+  fechaEntrega: z.string().min(1),
   clienteId: z.string().min(1),
   comentarios: z.string().nullable().optional(),
   items: z.array(orderItemSchema).min(1)
@@ -34,7 +35,8 @@ export const createOrderSchema = z.object({
 
 export const updateOrderSchema = z.object({
   folio: z.string().optional(),
-  fecha: z.string().optional(),
+  fechaOrden: z.string().optional(),
+  fechaEntrega: z.string().optional(),
   clienteId: z.string().optional(),
   comentarios: z.string().nullable().optional(),
   items: z.array(orderItemSchema).optional()
