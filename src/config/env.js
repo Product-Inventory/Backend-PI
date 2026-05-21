@@ -2,6 +2,29 @@ import dotenv from 'dotenv'
 
 dotenv.config()
 
+function parseCorsOrigin(value) {
+  if (value === undefined || value === null || value === '') {
+    return true
+  }
+
+  const normalized = String(value).trim()
+
+  if (normalized === '*' || normalized.toLowerCase() === 'true') {
+    return true
+  }
+
+  const origins = normalized
+    .split(',')
+    .map((origin) => origin.trim())
+    .filter(Boolean)
+
+  if (origins.length <= 1) {
+    return origins[0] || true
+  }
+
+  return origins
+}
+
 function required(name, fallback = undefined) {
   const value = process.env[name] ?? fallback
 
@@ -15,7 +38,7 @@ function required(name, fallback = undefined) {
 export const env = {
   PORT: Number(process.env.PORT || 3001),
   NODE_ENV: process.env.NODE_ENV || 'development',
-  CORS_ORIGIN: process.env.CORS_ORIGIN || true,
+  CORS_ORIGIN: parseCorsOrigin(process.env.CORS_ORIGIN),
 
   JWT_SECRET: required('JWT_SECRET'),
   JWT_EXPIRES_IN: process.env.JWT_EXPIRES_IN || '15m',

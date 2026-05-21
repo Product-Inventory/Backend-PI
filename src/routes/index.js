@@ -8,6 +8,7 @@ import clientsRoutes from '../modules/clients/clients.routes.js'
 import suppliersRoutes from '../modules/suppliers/suppliers.routes.js'
 import productsRoutes from '../modules/products/products.routes.js'
 import inventoryRoutes from '../modules/inventory/inventory.routes.js'
+import ordersRoutes from '../modules/orders/orders.routes.js'
 import recepcionesRoutes from '../modules/recepciones/recepciones.routes.js'
 import auditRoutes from '../modules/audit/audit.routes.js'
 import dashboardRoutes from '../modules/dashboard/dashboard.routes.js'
@@ -23,6 +24,7 @@ router.use('/clients', clientsRoutes)
 router.use('/suppliers', suppliersRoutes)
 router.use('/products', productsRoutes)
 router.use('/inventory', inventoryRoutes)
+router.use('/orders', ordersRoutes)
 router.use('/recepciones', recepcionesRoutes)
 router.use('/audit', auditRoutes)
 router.use('/dashboard', dashboardRoutes)

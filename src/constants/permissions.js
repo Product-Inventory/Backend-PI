@@ -9,6 +9,7 @@ export const PERMS = {
   SUPPLIERS:   { READ: 'suppliers:read', CREATE: 'suppliers:create', UPDATE: 'suppliers:update', DELETE: 'suppliers:delete' },
   PRODUCTS:    { READ: 'products:read', CREATE: 'products:create', UPDATE: 'products:update', DELETE: 'products:delete' },
   INVENTORY:   { READ: 'inventory:read', UPDATE: 'inventory:update' },
+  ORDERS:      { READ: 'orders:read', CREATE: 'orders:create', UPDATE: 'orders:update', DELETE: 'orders:delete' },
   RECEPCIONES: { READ: 'recepciones:read', CREATE: 'recepciones:create', UPDATE: 'recepciones:update', DELETE: 'recepciones:delete' },
   AUDIT:       { READ: 'audit:read', CREATE: 'audit:create' },
   DASHBOARD:   { READ: 'dashboard:read' }
@@ -17,5 +18,5 @@ export const PERMS = {
 // Lista de módulos funcionales del sistema.
 export const MODULES = [
   'users', 'roles', 'permissions', 'clients', 'suppliers',
-  'products', 'inventory', 'recepciones', 'audit', 'dashboard'
+  'products', 'inventory', 'orders', 'recepciones', 'audit', 'dashboard'
 ]
