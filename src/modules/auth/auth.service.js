@@ -1,6 +1,7 @@
 import bcrypt from 'bcryptjs'
 import { signAccessToken } from '../../config/jwt.js'
 import { authRepository } from './auth.repository.js'
+import { rolesRepository } from '../roles/roles.repository.js'
 import { MODULES } from '../../constants/permissions.js'
 
 export class AuthService {
@@ -37,18 +38,21 @@ export class AuthService {
       throw error
     }
 
+    // La fuente de verdad de los permisos es el rol, no el usuario!, q no se nos olvide team
+    const permissions = await this.resolveRolePermissions(user.roleId)
+
     // El JWT solo lleva sub para identificar al usuario; los permisos se releen desde Firestore en cada request
     const token = signAccessToken({
       sub: user.id,
       usuario: user.usuario,
       role: user.role || null,
       roleId: user.roleId || null,
-      permissions: Array.isArray(user.permissions) ? user.permissions : []
+      permissions
     })
 
     return {
       token,
-      user: this.sanitizeUser(user)
+      user: this.sanitizeUser(user, permissions)
     }
   }
 
@@ -67,7 +71,15 @@ export class AuthService {
       throw error
     }
 
-    return this.sanitizeUser(user)
+    const permissions = await this.resolveRolePermissions(user.roleId)
+    return this.sanitizeUser(user, permissions)
+  }
+
+  // Resuelve los permisos a partir del rol del usuario
+  async resolveRolePermissions(roleId) {
+    if (!roleId) return []
+    const role = await rolesRepository.findById(roleId)
+    return Array.isArray(role?.permissions) ? role.permissions : []
   }
 
   // Construye la lista de módulos accesibles con flags de acciones para el frontend.
@@ -86,7 +98,7 @@ export class AuthService {
       .filter((m) => m.canRead || m.canCreate || m.canUpdate || m.canDelete)
   }
 
-  sanitizeUser(user) {
+  sanitizeUser(user, permissions = []) {
     return {
       id: user.id,
       nombre: user.nombre || '',
@@ -95,7 +107,7 @@ export class AuthService {
       usuario: user.usuario || '',
       role: user.role || null,
       roleId: user.roleId || null,
-      permissions: Array.isArray(user.permissions) ? user.permissions : [],
+      permissions: Array.isArray(permissions) ? permissions : [],
       activo: user.activo ?? true
     }
   }
