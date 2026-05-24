@@ -319,6 +319,39 @@ export class OrdersService {
     return sanitized
   }
 
+  async deliver(id, fechaEntrega, currentUser = null) {
+    const order = await ordersRepository.findById(id)
+    if (!order) {
+      const error = new Error('Orden no encontrada')
+      error.statusCode = 404
+      throw error
+    }
+
+    if (order.status !== 'CONFIRMED') {
+      const error = new Error('Solo se pueden entregar órdenes confirmadas')
+      error.statusCode = 400
+      throw error
+    }
+
+    const updated = await ordersRepository.update(id, {
+      status: 'DELIVERED',
+      fechaEntrega: fechaEntrega || order.fechaEntrega,
+      updatedAt: new Date().toISOString(),
+    });
+
+    const sanitized = this.sanitizeOrder(updated);
+
+    await logAuditEvent({
+      action: 'DELIVER',
+      resource: 'orders',
+      resourceId: updated.id,
+      details: { folio: sanitized.folio },
+      currentUser
+    });
+
+    return sanitized;
+  }
+
   async cancel(id, currentUser = null) {
     const currentOrder = await ordersRepository.findById(id)
     if (!currentOrder) {

@@ -69,6 +69,16 @@ router.patch(
 )
 
 router.patch(
+  '/:id/deliver',
+  authenticate,
+  requirePermissions([PERMS.ORDERS.UPDATE]),
+  validate(orderIdParamSchema, 'params'),
+  asyncHandler(
+    ordersController.deliver.bind(ordersController)
+  )
+)
+
+router.patch(
   '/:id/cancel',
   authenticate,
   requirePermissions([PERMS.ORDERS.UPDATE]),
