@@ -49,6 +49,19 @@ export class OrdersController {
     })
   }
 
+  async deliver(req, res) {
+    const { fechaEntrega } = req.body;
+    const order = await ordersService.deliver(
+      req.params.id,
+      fechaEntrega,
+      req.user
+    );
+    return res.status(200).json({
+      message: 'Orden entregada correctamente',
+      item: order
+    });
+  }
+
   async cancel(req, res) {
     const order = await ordersService.cancel(
       req.params.id,
