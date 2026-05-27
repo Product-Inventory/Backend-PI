@@ -49,6 +49,11 @@ const DEFAULT_PERMISSIONS = [
   { code: 'inventory:read', nombre: 'Ver inventario', descripcion: 'Permite consultar inventario', modulo: 'inventory' },
   { code: 'inventory:update', nombre: 'Actualizar inventario', descripcion: 'Permite ajustar inventario', modulo: 'inventory' },
 
+  { code: 'orders:read', nombre: 'Ver órdenes', descripcion: 'Permite listar y ver órdenes', modulo: 'orders' },
+  { code: 'orders:create', nombre: 'Crear órdenes', descripcion: 'Permite registrar órdenes', modulo: 'orders' },
+  { code: 'orders:update', nombre: 'Editar órdenes', descripcion: 'Permite actualizar órdenes', modulo: 'orders' },
+  { code: 'orders:delete', nombre: 'Eliminar órdenes', descripcion: 'Permite eliminar órdenes', modulo: 'orders' },
+
   { code: 'recepciones:read', nombre: 'Ver recepciones', descripcion: 'Permite listar y ver recepciones', modulo: 'recepciones' },
   { code: 'recepciones:create', nombre: 'Crear recepciones', descripcion: 'Permite registrar recepciones', modulo: 'recepciones' },
   { code: 'recepciones:update', nombre: 'Editar recepciones', descripcion: 'Permite actualizar recepciones', modulo: 'recepciones' },

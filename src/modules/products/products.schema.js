@@ -22,9 +22,7 @@ export const productIdParamSchema = z.object({
 })
 
 export const createProductSchema = z.object({
-  sku: z
-    .string({ required_error: 'El SKU es obligatorio' })
-    .min(2, 'El SKU debe tener al menos 2 caracteres'),
+  // sku: generado automáticamente por el backend, no se recibe del cliente
   nombre: z
     .string({ required_error: 'El nombre es obligatorio' })
     .min(2, 'El nombre debe tener al menos 2 caracteres'),
@@ -41,7 +39,7 @@ export const createProductSchema = z.object({
 })
 
 export const updateProductSchema = z.object({
-  sku: z.string().min(2, 'El SKU debe tener al menos 2 caracteres').optional(),
+  // sku: no editable después de la creación
   nombre: z.string().min(2, 'El nombre debe tener al menos 2 caracteres').optional(),
   descripcion: z.string().nullable().optional(),
   categoria: z.string().nullable().optional(),

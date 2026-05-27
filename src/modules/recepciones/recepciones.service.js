@@ -1,5 +1,6 @@
 import { recepcionesRepository } from './recepciones.repository.js'
 import { logAuditEvent } from '../../utils/audit.js'
+import { getNextFolio } from '../../utils/counters.js'
 
 function normalizeOptionalText(value) {
   if (value === undefined) return undefined
@@ -75,13 +76,8 @@ export class RecepcionesService {
   }
 
   async create(payload, currentUser = null) {
-    const existingByFolio = await recepcionesRepository.findByFolio(payload.folio)
-
-    if (existingByFolio) {
-      const error = new Error('El folio de la recepción ya existe')
-      error.statusCode = 409
-      throw error
-    }
+    // Folio generado automáticamente por el backend de forma atómica
+    const folio = await getNextFolio('recepciones', 'REC')
 
     const supplier = await recepcionesRepository.findSupplierById(payload.supplierId)
 
@@ -123,7 +119,7 @@ export class RecepcionesService {
       supplierId: supplier.id,
       supplierNombre: supplier.nombre || '',
       fecha: payload.fecha,
-      folio: payload.folio.trim(),
+      folio,
       comentarios: normalizeOptionalText(payload.comentarios) || '',
       status: 'DRAFT',
       items,
@@ -176,17 +172,7 @@ export class RecepcionesService {
       updatedAt: new Date().toISOString()
     }
 
-    if (payload.folio !== undefined && payload.folio !== currentRecepcion.folio) {
-      const existingByFolio = await recepcionesRepository.findByFolio(payload.folio)
-
-      if (existingByFolio && existingByFolio.id !== id) {
-        const error = new Error('El folio de la recepción ya existe')
-        error.statusCode = 409
-        throw error
-      }
-
-      data.folio = payload.folio.trim()
-    }
+    // El folio no se puede modificar una vez asignado automáticamente
 
     if (payload.supplierId !== undefined) {
       const supplier = await recepcionesRepository.findSupplierById(payload.supplierId)

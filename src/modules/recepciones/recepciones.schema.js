@@ -28,7 +28,7 @@ export const recepcionIdParamSchema = z.object({
 export const createRecepcionSchema = z.object({
   supplierId: z.string({ required_error: 'El supplierId es obligatorio' }).min(1, 'El supplierId es obligatorio'),
   fecha: z.string({ required_error: 'La fecha es obligatoria' }).min(1, 'La fecha es obligatoria'),
-  folio: z.string({ required_error: 'El folio es obligatorio' }).min(2, 'El folio debe tener al menos 2 caracteres'),
+  // folio: generado automáticamente por el backend, no se recibe del cliente
   comentarios: z.string().optional().nullable(),
   items: z.array(recepcionItemSchema).min(1, 'Debes agregar al menos una partida')
 })
@@ -36,7 +36,7 @@ export const createRecepcionSchema = z.object({
 export const updateRecepcionSchema = z.object({
   supplierId: z.string().min(1, 'El supplierId es obligatorio').optional(),
   fecha: z.string().min(1, 'La fecha es obligatoria').optional(),
-  folio: z.string().min(2, 'El folio debe tener al menos 2 caracteres').optional(),
+  // folio: no editable después de la creación
   comentarios: z.string().nullable().optional(),
   items: z.array(recepcionItemSchema).min(1, 'Debes agregar al menos una partida').optional()
 }).refine((data) => Object.keys(data).length > 0, {
