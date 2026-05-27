@@ -24,7 +24,7 @@ export const adjustInventorySchema = z.object({
   tipo: z.enum(['ENTRADA', 'SALIDA', 'AJUSTE'], {
     required_error: 'El tipo es obligatorio'
   }),
-  cantidad: z.coerce.number().positive('La cantidad debe ser mayor a 0'),
+  cantidad: z.coerce.number().int('La cantidad debe ser un número entero').positive('La cantidad debe ser mayor a 0'),
   motivo: z
     .string({ required_error: 'El motivo es obligatorio' })
     .min(3, 'El motivo debe tener al menos 3 caracteres'),
