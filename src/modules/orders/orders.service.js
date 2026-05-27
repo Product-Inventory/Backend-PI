@@ -2,18 +2,13 @@ import { ordersRepository } from './orders.repository.js'
 import { productsRepository } from '../products/products.repository.js'
 import { clientsRepository } from '../clients/clients.repository.js'
 import { logAuditEvent } from '../../utils/audit.js'
+import { getNextFolio } from '../../utils/counters.js'
 
 function normalizeOptionalText(value) {
   if (value === undefined) return undefined
   if (value === null) return null
   const trimmed = String(value).trim()
   return trimmed === '' ? '' : trimmed
-}
-
-function normalizeFolio(value) {
-  return String(value || '')
-    .trim()
-    .toUpperCase()
 }
 
 function normalizeDateString(value) {
@@ -66,14 +61,8 @@ export class OrdersService {
   }
 
   async create(payload, currentUser = null) {
-    const normalizedFolio = normalizeFolio(payload.folio)
-
-    const existingOrder = await ordersRepository.findByFolio(normalizedFolio)
-    if (existingOrder) {
-      const error = new Error('El folio ya existe')
-      error.statusCode = 409
-      throw error
-    }
+    // Folio generado automáticamente por el backend de forma atómica
+    const folio = await getNextFolio('orders', 'ORD')
 
     const client = await clientsRepository.findById(payload.clienteId)
     if (!client) {
@@ -113,7 +102,7 @@ export class OrdersService {
     const now = new Date().toISOString()
 
     const data = {
-      folio: normalizedFolio,
+      folio,
       fechaOrden: normalizeDateString(payload.fechaOrden) || '',
       fechaEntrega: normalizeDateString(payload.fechaEntrega) ?? null,
 
@@ -171,20 +160,7 @@ export class OrdersService {
       updatedAt: new Date().toISOString()
     }
 
-    if (payload.folio !== undefined) {
-      const normalizedFolio = normalizeFolio(payload.folio)
-
-      if (normalizedFolio !== currentOrder.folio) {
-        const existing = await ordersRepository.findByFolio(normalizedFolio)
-        if (existing && existing.id !== id) {
-          const error = new Error('El folio ya existe')
-          error.statusCode = 409
-          throw error
-        }
-      }
-
-      data.folio = normalizedFolio
-    }
+    // El folio no se puede modificar una vez asignado automáticamente
 
     if (payload.fechaOrden !== undefined) {
       data.fechaOrden = normalizeDateString(payload.fechaOrden) || ''

@@ -1,5 +1,6 @@
 import { productsRepository } from './products.repository.js'
 import { logAuditEvent } from '../../utils/audit.js'
+import { getNextFolio } from '../../utils/counters.js'
 
 function normalizeOptionalText(value) {
   if (value === undefined) return undefined
@@ -9,9 +10,6 @@ function normalizeOptionalText(value) {
   return trimmed === '' ? '' : trimmed
 }
 
-function normalizeSku(value) {
-  return String(value || '').trim().toUpperCase()
-}
 
 export class ProductsService {
   async list(query) {
@@ -78,18 +76,11 @@ export class ProductsService {
   }
 
   async create(payload, currentUser = null) {
-    const normalizedSku = normalizeSku(payload.sku)
-
-    const existingBySku = await productsRepository.findBySku(normalizedSku)
-
-    if (existingBySku) {
-      const error = new Error('El SKU del producto ya existe')
-      error.statusCode = 409
-      throw error
-    }
+    // SKU generado automáticamente por el backend de forma atómica
+    const sku = await getNextFolio('products', 'PRD')
 
     const data = {
-      sku: normalizedSku,
+      sku,
       nombre: payload.nombre.trim(),
       descripcion: normalizeOptionalText(payload.descripcion) || '',
       categoria: normalizeOptionalText(payload.categoria) || '',
@@ -134,25 +125,11 @@ export class ProductsService {
       throw error
     }
 
-    if (payload.sku !== undefined) {
-      const normalizedSku = normalizeSku(payload.sku)
-
-      if (normalizedSku && normalizedSku !== String(currentProduct.sku || '').toUpperCase()) {
-        const existingBySku = await productsRepository.findBySku(normalizedSku)
-
-        if (existingBySku && existingBySku.id !== id) {
-          const error = new Error('El SKU del producto ya existe')
-          error.statusCode = 409
-          throw error
-        }
-      }
-    }
-
     const data = {
       updatedAt: new Date().toISOString()
     }
 
-    if (payload.sku !== undefined) data.sku = normalizeSku(payload.sku)
+    // El SKU no se puede modificar una vez asignado automáticamente
     if (payload.nombre !== undefined) data.nombre = payload.nombre.trim()
     if (payload.descripcion !== undefined) data.descripcion = normalizeOptionalText(payload.descripcion) || ''
     if (payload.categoria !== undefined) data.categoria = normalizeOptionalText(payload.categoria) || ''

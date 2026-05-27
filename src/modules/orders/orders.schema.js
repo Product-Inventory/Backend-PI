@@ -25,7 +25,7 @@ const orderItemSchema = z.object({
 })
 
 export const createOrderSchema = z.object({
-  folio: z.string().min(1),
+  // folio: generado automáticamente por el backend, no se recibe del cliente
   fechaOrden: z.string().min(1),
   fechaEntrega: z.string().nullable().optional(),
   clienteId: z.string().min(1),
@@ -34,7 +34,7 @@ export const createOrderSchema = z.object({
 })
 
 export const updateOrderSchema = z.object({
-  folio: z.string().optional(),
+  // folio: no editable después de la creación
   fechaOrden: z.string().optional(),
   fechaEntrega: z.string().nullable().optional(),
   clienteId: z.string().optional(),
