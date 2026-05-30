@@ -336,6 +336,22 @@ export class OrdersService {
       throw error
     }
 
+    // Solo las órdenes CONFIRMADAS descontaron stock al confirmarse.
+    // Al cancelarlas hay que devolver ese stock para que el inventario
+    // refleje el cambio. Las DRAFT nunca descontaron y las DELIVERED ya
+    // salieron del almacén, así que no se reponen.
+    if (currentOrder.status === 'CONFIRMED' && Array.isArray(currentOrder.items)) {
+      for (const item of currentOrder.items) {
+        const product = await productsRepository.findById(item.productId)
+        if (!product) continue
+        const newStock = Number(product.stock || 0) + Number(item.cantidad || 0)
+        await productsRepository.update(product.id, {
+          stock: newStock,
+          updatedAt: new Date().toISOString()
+        })
+      }
+    }
+
     const updated = await ordersRepository.update(id, {
       status: 'CANCELLED',
       updatedAt: new Date().toISOString()
